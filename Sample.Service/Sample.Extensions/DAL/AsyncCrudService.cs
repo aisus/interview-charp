@@ -21,15 +21,15 @@ namespace Sample.Extensions.DAL
             repository = ctx.Set<T>();
         }
 
-        public async Task<ApiResult<TModel>> GetRecordAsync<TModel>(Guid guid) where TModel : class
+        public async Task<ApiResult<T>> GetRecordAsync(Guid guid)
         {
             var result = await repository
                 .WithId(guid)
-                .ProjectToType<TModel>()
                 .FirstOrDefaultAsync();
+
             return result != null
-                ? ApiResult<TModel>.Success(result)
-                : ApiResult<TModel>.NotFound();
+                ? ApiResult<T>.Success(result)
+                : ApiResult<T>.NotFound();
         }
 
         public async Task<ApiResult<CollectionOutputModel<TModel>>> GetPageAsync<TModel>(PageModel pageModel,
@@ -43,14 +43,29 @@ namespace Sample.Extensions.DAL
                 : ApiResult<CollectionOutputModel<TModel>>.NotFound();
         }
 
+        public async Task<ApiResult<T>> FindAsync(Expression<Func<T, bool>> filter)
+        {
+            var result = await repository
+                .FirstOrDefaultAsync(filter);
+
+            return result != null
+                ? ApiResult<T>.Success(result)
+                : ApiResult<T>.NotFound();
+        }
+
         public async Task<ApiResult<T>> CreateAsync<TModel>(TModel insertModel)
         {
             var record = insertModel.Adapt<T>();
-            
+            if (record.Id == default)
+            {
+                record.Id = Guid.NewGuid();
+            }
+
             var entityWithDate = record as IAuditableEntity;
             if (entityWithDate != null)
             {
-                entityWithDate.CreatedDate = DateTime.UtcNow;
+                entityWithDate.CreatedDate = DateTimeOffset.UtcNow;
+                entityWithDate.LastModifiedDate = DateTimeOffset.UtcNow;
             }
 
             repository.Add(record);
@@ -62,7 +77,15 @@ namespace Sample.Extensions.DAL
         private async Task<ApiResult<T>> UpdateRecordAsync<TModel>(T record, TModel updateModel)
         {
             updateModel.Adapt(record);
+
+            var entityWithDate = record as IAuditableEntity;
+            if (entityWithDate != null)
+            {
+                entityWithDate.LastModifiedDate = DateTimeOffset.UtcNow;
+            }
+
             await context.SaveChangesAsync();
+            await context.Entry(record).ReloadAsync();
             return ApiResult<T>.Success(record);
         }
 

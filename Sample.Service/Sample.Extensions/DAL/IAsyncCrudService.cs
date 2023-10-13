@@ -7,9 +7,11 @@ namespace Sample.Extensions.DAL
 {
     public interface IAsyncCrudService<T> where T : class, IEntity
     {
-        Task<ApiResult<TModel>> GetRecordAsync<TModel>(Guid guid) where TModel : class;
+        Task<ApiResult<T>> GetRecordAsync(Guid guid);
 
         Task<ApiResult<CollectionOutputModel<TModel>>> GetPageAsync<TModel>(PageModel pageModel, Expression<Func<T, bool>> filter);
+
+        Task<ApiResult<T>> FindAsync(Expression<Func<T, bool>> filter);
 
         Task<ApiResult<T>> CreateAsync<TModel>(TModel insertModel);
 
