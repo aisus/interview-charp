@@ -1,29 +1,29 @@
 version: '3.7'
 networks:
-    testserver_net:
-      name: 'testserver_net' 
+    sampleservice_net:
+      name: 'sampleservice_net' 
 
 services:
     aspnet:
         build: 
-          dockerfile: ./Team.Service/Dockerfile
+          dockerfile: ./Sample.Service/Dockerfile
           context: .
         restart: always
-        container_name: 'testserver_local'
+        container_name: 'sampleservice_local'
         ports:
           - 8000:80
         working_dir: '/app'
         networks:
-          - testserver_net   
+          - sampleservice_net   
 
     db:
         image: 'postgres:12.1'
-        container_name: 'testserver_local_db'
+        container_name: 'sampleservice_local_db'
         restart: always
         networks:
-            - testserver_net    
+            - sampleservice_net    
         environment:
-            POSTGRES_DB: testserver
+            POSTGRES_DB: sampleservice
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
         ports:
@@ -33,7 +33,7 @@ services:
         image: adminer
         restart: always
         networks:
-          - testserver_net    
+          - sampleservice_net    
         ports:
             - 8080:8080
         depends_on:
