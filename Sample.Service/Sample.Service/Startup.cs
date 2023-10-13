@@ -12,6 +12,8 @@ using Sample.DAL;
 using Sample.DAL.Models;
 using Sample.Extensions.DAL;
 using Sample.Service.Configuration;
+using Sample.Business.Services;
+using Sample.Business.Services.Game;
 
 namespace Sample.Service
 {
@@ -30,18 +32,12 @@ namespace Sample.Service
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test.Service", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sample.Service", Version = "v1" });
             });
 
-            // services.AddScoped<DbContext, SampleDbContext>((sp) =>
-            // {
-            //     var contextOptions = new DbContextOptionsBuilder<SampleDbContext>()
-            //                         .UseNpgsql(Configuration.GetConnectionString("PostgreSQL"))
-            //                         .Options;
-            //     return new SampleDbContext(contextOptions);
-            // });
-            services.AddDbContext<SampleDbContext>(options =>
+            services.AddDbContext<DbContext, SampleDbContext>(options =>
                  options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
+            
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -59,6 +55,10 @@ namespace Sample.Service
 
             services.AddTransient(typeof(IAsyncCrudService<>), typeof(AsyncCrudService<>));
             services.AddTransient(typeof(IAsyncOrderedQueryService<>), typeof(AsyncOrderedQueryService<>));
+            services.AddTransient<IBalanceService, BalanceService>();
+            services.AddTransient<IOperationService, OperationService>();
+            services.AddTransient<IGameService, GameService>();
+            services.AddTransient<IGameStrategy, DefaultGameStrategy>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,7 +70,11 @@ namespace Sample.Service
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Test.Service v1"));
+            app.UseSwaggerUI(c => 
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sample.Service v1");
+                c.RoutePrefix = "swagger/ui";
+            });
 
             app.InitializeDatabase();
             app.UseHsts();

@@ -14,14 +14,12 @@ namespace Sample.Business.Services
     {
         private readonly IBalanceService balanceService;
         private readonly IOperationService operationService;
-        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IGameStrategy gameStrategy;
 
-        public GameService(IBalanceService balanceService, IOperationService operationService, IHttpContextAccessor httpContextAccessor, IGameStrategy gameStrategy)
+        public GameService(IBalanceService balanceService, IOperationService operationService, IGameStrategy gameStrategy)
         {
             this.balanceService = balanceService;
             this.operationService = operationService;
-            this.httpContextAccessor = httpContextAccessor;
             this.gameStrategy = gameStrategy;
         }
 

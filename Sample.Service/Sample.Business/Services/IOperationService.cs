@@ -9,5 +9,6 @@ namespace Sample.Business.Services
     public interface IOperationService
     {
         Task<ApiResult<Operation>> AddOperationEntry(Guid balanceId, OperationType type, decimal balanceChange, string message);
+        Task<ApiResult<CollectionOutputModel<OperationOutputDTO>>> GetPageAsync(PageModel pageModel, bool descending);
     }
 }
