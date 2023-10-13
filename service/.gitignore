@@ -1,0 +1,7 @@
+bin/
+obj/
+/packages/
+/.idea/
+.vs/
+*.csproj.user
+Gin.BPLA.sln.DotSettings.user
