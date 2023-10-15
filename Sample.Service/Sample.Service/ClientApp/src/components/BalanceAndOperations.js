@@ -88,8 +88,7 @@ export class BalanceAndOperations extends Component {
       <div>
         <h1 id="tableLabel">Balance and operations</h1>
         <p>Current balance: {balance}</p>
-        <form onSubmit={this.handleDepositSubmit} class="input-group">
-          {/* <label for="depositInput">Deposit:</label> */}
+        <form onSubmit={this.handleDepositSubmit} class="input-group my-2">
           <input
             type="number"
             class="form-control"
@@ -98,13 +97,12 @@ export class BalanceAndOperations extends Component {
             onChange={this.handleDepositAmountChange}
           />
           <div class="input-group-append">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary mx-2">
               Deposit
             </button>
           </div>
         </form>
-        <form onSubmit={this.handleWithdrawSubmit} class="input-group">
-          {/* <label for="withdrawInput">Withdraw:</label> */}
+        <form onSubmit={this.handleWithdrawSubmit} class="input-group my-2">
           <input
             type="number"
             class="form-control"
@@ -113,7 +111,7 @@ export class BalanceAndOperations extends Component {
             onChange={this.handleWithdrawAmountChange}
           />
           <div class="input-group-append">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary mx-2">
               Withdraw
             </button>
           </div>

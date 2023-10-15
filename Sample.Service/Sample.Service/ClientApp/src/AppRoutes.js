@@ -5,6 +5,7 @@ import { Game } from "./components/Game";
 const AppRoutes = [
   {
     index: true,
+    requireAuth: true,
     element: <Game />
   },
   {

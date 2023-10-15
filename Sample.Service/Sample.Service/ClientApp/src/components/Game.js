@@ -49,7 +49,10 @@ export class Game extends Component {
       ) : (
         <div>
           <p>{this.state.gameResult.gameWon ? "You won!" : "You lost!"}</p>
-          <p>Winning number: {this.state.gameResult.winningNumber}, balance change: {this.state.gameResult.balanceChange}</p>
+          <p>
+            Winning number: {this.state.gameResult.winningNumber}, balance
+            change: {this.state.gameResult.balanceChange}
+          </p>
         </div>
       );
     return (
@@ -77,12 +80,11 @@ export class Game extends Component {
               onChange={this.handleNumberChange}
             />
           </div>
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-primary my-2">
             Make a bet
           </button>
         </form>
         <br />
-        <p>Last game result:</p>
         {lastGameResult}
       </div>
     );
