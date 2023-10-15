@@ -8,7 +8,7 @@ export class Game extends Component {
     super(props);
     this.state = {
       balance: {},
-      gameResult: {},
+      gameResult: null,
       gameInput: { stake: 0, number: 5 },
       loading: true,
     };
@@ -31,7 +31,6 @@ export class Game extends Component {
     this.setState({
       gameInput: { ...this.state.gameInput, number: event.target.value },
     });
-    console.log(this.state);
   };
 
   handleSubmit = async (event) => {
@@ -44,23 +43,47 @@ export class Game extends Component {
       ? "..."
       : this.state.balance.currentBalance;
 
+    let lastGameResult =
+      this.state.gameResult === null ? (
+        <p></p>
+      ) : (
+        <div>
+          <p>{this.state.gameResult.gameWon ? "You won!" : "You lost!"}</p>
+          <p>Winning number: {this.state.gameResult.winningNumber}, balance change: {this.state.gameResult.balanceChange}</p>
+        </div>
+      );
     return (
       <div>
         <h1 id="tableLabel">Play</h1>
         <p>Current balance: {balance}</p>
         <form onSubmit={this.handleSubmit}>
-          <input
-            type="number"
-            value={this.state.gameInput.stake}
-            onChange={this.handleStakeChange}
-          />
-          <input
-            type="number"
-            value={this.state.gameInput.number}
-            onChange={this.handleNumberChange}
-          />
-          <button type="submit">Make a bet</button>
+          <div class="form-group">
+            <label for="stakeInput">Stake:</label>
+            <input
+              type="number"
+              class="form-control"
+              id="stakeInput"
+              value={this.state.gameInput.stake}
+              onChange={this.handleStakeChange}
+            />
+          </div>
+          <div class="form-group">
+            <label for="numberInput">Number:</label>
+            <input
+              type="number"
+              class="form-control"
+              id="numberInput"
+              value={this.state.gameInput.number}
+              onChange={this.handleNumberChange}
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            Make a bet
+          </button>
         </form>
+        <br />
+        <p>Last game result:</p>
+        {lastGameResult}
       </div>
     );
   }

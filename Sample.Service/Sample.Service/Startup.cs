@@ -14,6 +14,8 @@ using Sample.Extensions.DAL;
 using Sample.Service.Configuration;
 using Sample.Business.Services;
 using Sample.Business.Services.Game;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Sample.Service
 {
@@ -29,7 +31,11 @@ namespace Sample.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            }); ;
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sample.Service", Version = "v1" });
@@ -37,7 +43,7 @@ namespace Sample.Service
 
             services.AddDbContext<DbContext, SampleDbContext>(options =>
                  options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
-            
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -70,7 +76,7 @@ namespace Sample.Service
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => 
+            app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sample.Service v1");
                 c.RoutePrefix = "swagger/ui";
