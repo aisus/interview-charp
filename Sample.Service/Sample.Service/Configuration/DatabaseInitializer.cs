@@ -16,7 +16,7 @@ namespace Sample.Service.Configuration
                 .CreateScope();
             using var context = serviceScope.ServiceProvider.GetService<SampleDbContext>();
 
-            context.Database.EnsureCreated();
+            // context.Database.EnsureCreated();
 
             // if (!context.Database.GetService<IRelationalDatabaseCreator>().Exists())
             // {

@@ -15,9 +15,12 @@ namespace Sample.DAL
     {
         public SampleDbContext CreateDbContext(string[] args)
         {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.Development.json", false)
+            .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<SampleDbContext>();
-            optionsBuilder.UseNpgsql("User ID=postgres;Password=admin;Host=localhost;Port=5432;Database=interview_rhenus;");
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("PostgreSQL"));
 
             return new SampleDbContext(optionsBuilder.Options, new OperationalStoreOptionsMigrations());
         }
