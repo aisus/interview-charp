@@ -79,7 +79,7 @@ namespace Sample.Business.Services
                 return ApiResult<Balance>.BadRequest("Insufficient balance");
             }
 
-            return ApiResult<Balance>.SuccessEmpty;
+            return ApiResult<Balance>.Success(balance);
         }
 
         public async Task<ApiResult<Balance>> Add(decimal amount)

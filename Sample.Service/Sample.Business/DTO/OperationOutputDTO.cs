@@ -8,6 +8,6 @@ namespace Sample.DAL.Models
         public OperationType Type { get; set; }
         public decimal BalanceChange { get; set; }
         public string Message { get; set; }
-        public DateTimeOffset? LastModifiedDate { get; set; }
+        public DateTimeOffset? CreatedDate { get; set; }
     }
 }

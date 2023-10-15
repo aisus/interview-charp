@@ -1,16 +1,16 @@
 import ApiAuthorzationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
-import { FetchData } from "./components/FetchData";
-import { Home } from "./components/Home";
+import { BalanceAndOperations } from "./components/BalanceAndOperations";
+import { Game } from "./components/Game";
 
 const AppRoutes = [
   {
     index: true,
-    element: <Home />
+    element: <Game />
   },
   {
-    path: '/fetch-data',
+    path: '/balance',
     requireAuth: true,
-    element: <FetchData />
+    element: <BalanceAndOperations />
   },
   ...ApiAuthorzationRoutes
 ];

@@ -33,7 +33,17 @@ namespace Sample.Business.Services
             }
 
             var result = gameStrategy.Play(input);
-            // TODO
+            if (result.GameWon)
+            {
+                await balanceService.Add(Math.Abs(result.BalanceChange));
+            }
+            else
+            {
+                await balanceService.Take(Math.Abs(result.BalanceChange));
+            }
+
+            await operationService.AddOperationEntry(balanceCheck.Entity.Id, DAL.Enums.OperationType.Game, result.BalanceChange, "Game");
+
             return ApiResult<GameOutputDTO>.Success(result);
         }
     }
