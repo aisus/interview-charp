@@ -18,6 +18,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.CookiePolicy;
 
 namespace Sample.Service
 {
@@ -53,20 +54,14 @@ namespace Sample.Service
 
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, SampleDbContext>(
-                // options => {
-                // options.Clients.AddIdentityServerSPA("src", builder =>
-                // {
-                //     builder.WithRedirectUri("https://localhost:44307/authentication/login-callback");
-                //     builder.WithLogoutRedirectUri("https://localhost:44307/authentication/logout-callback");
-                // });
-                // options.Clients.Add(new Client
-                // {
-                //     ClientId = "src",
-                //     AllowedGrantTypes = { GrantType.ResourceOwnerPassword },
-                //     ClientSecrets = { new Secret("secret".Sha256()) },
-                //     AllowedScopes = { "api", "openid", "profile" }
-                // });
-                // }
+                options =>
+                {
+                    options.Clients.AddIdentityServerSPA("src", builder =>
+                    {
+                        builder.WithRedirectUri("/authentication/login-callback");
+                        builder.WithLogoutRedirectUri("/authentication/logout-callback");
+                    });
+                }
                 );
 
             services.AddAuthentication()
@@ -78,6 +73,7 @@ namespace Sample.Service
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.SameSite = SameSiteMode.Unspecified;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             services.AddTransient(typeof(IAsyncCrudService<>), typeof(AsyncCrudService<>));
@@ -121,9 +117,13 @@ namespace Sample.Service
             app.UseStaticFiles();
             app.UseRouting();
 
-            app.UseCookiePolicy();
-            app.UseAuthentication();
+            app.UseCookiePolicy(new CookiePolicyOptions() {
+                HttpOnly = HttpOnlyPolicy.None,
+                MinimumSameSitePolicy = SameSiteMode.None,
+                Secure = CookieSecurePolicy.Always
+            });
             app.UseIdentityServer();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

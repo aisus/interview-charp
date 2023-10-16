@@ -12,6 +12,7 @@ export class BalanceAndOperations extends Component {
       withdraw: { amount: 0 },
       deposit: { amount: 0 },
       loading: true,
+      error: false
     };
     this.handleDepositAmountChange = this.handleDepositAmountChange.bind(this);
     this.handleWithdrawAmountChange =
@@ -170,6 +171,11 @@ export class BalanceAndOperations extends Component {
           },
       body: JSON.stringify(this.state.deposit),
     });
+
+    if (depositResponse.status != 200)
+    {
+      
+    }
 
     await this.populateData();
   }

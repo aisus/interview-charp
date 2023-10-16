@@ -12,10 +12,10 @@ window.fetch = () => {
     {
       ok: true,
       json: () => Promise.resolve({
-        "authority": "https://localhost:7002",
+        "authority": "http://localhost:8000",
         "client_id": "src",
-        "redirect_uri": "https://localhost:7002/authentication/login-callback",
-        "post_logout_redirect_uri": "https://localhost:7002/authentication/logout-callback",
+        "redirect_uri": "http://localhost:8000/authentication/login-callback",
+        "post_logout_redirect_uri": "http://localhost:8000/authentication/logout-callback",
         "response_type": "id_token token",
         "scope": "srcAPI openid profile"
      })
