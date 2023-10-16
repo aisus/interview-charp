@@ -9,8 +9,10 @@ export class Game extends Component {
     this.state = {
       balance: {},
       gameResult: null,
-      gameInput: { stake: 0, number: 5 },
+      gameInput: { stake: 1, number: 5 },
       loading: true,
+      error: false, 
+      errorMessage: {}
     };
     this.handleStakeChange = this.handleStakeChange.bind(this);
     this.handleNumberChange = this.handleNumberChange.bind(this);
@@ -43,11 +45,19 @@ export class Game extends Component {
       ? "..."
       : this.state.balance.currentBalance;
 
+    let alert = this.state.error ? (
+      <div class="alert alert-danger" role="alert">
+        {this.state.errorMessage.message}
+      </div>
+    ) : (
+      ""
+    );
+
     let lastGameResult =
-      this.state.gameResult === null ? (
+      this.state.error || this.state.gameResult === null ? (
         <p></p>
       ) : (
-        <div>
+        <div className={`alert ${this.state.gameResult.gameWon ? "alert-success" : "alert-dark"}`}>
           <p>{this.state.gameResult.gameWon ? "You won!" : "You lost!"}</p>
           <p>
             Winning number: {this.state.gameResult.winningNumber}, balance
@@ -55,6 +65,7 @@ export class Game extends Component {
           </p>
         </div>
       );
+
     return (
       <div>
         <h1 id="tableLabel">Play</h1>
@@ -66,6 +77,7 @@ export class Game extends Component {
               type="number"
               class="form-control"
               id="stakeInput"
+              min="1"
               value={this.state.gameInput.stake}
               onChange={this.handleStakeChange}
             />
@@ -76,6 +88,8 @@ export class Game extends Component {
               type="number"
               class="form-control"
               id="numberInput"
+              min="1"
+              max="9"
               value={this.state.gameInput.number}
               onChange={this.handleNumberChange}
             />
@@ -84,6 +98,7 @@ export class Game extends Component {
             Make a bet
           </button>
         </form>
+        {alert}
         <br />
         {lastGameResult}
       </div>
@@ -100,7 +115,7 @@ export class Game extends Component {
   }
 
   async makeABet() {
-    this.setState({ loading: true });
+    this.setState({ loading: true, error: false });
     const token = await authService.getAccessToken();
     const gameResponse = await fetch("api/game", {
       method: "POST",
@@ -115,6 +130,12 @@ export class Game extends Component {
     });
     const gameResult = await gameResponse.json();
     this.setState({ gameResult: gameResult });
+    if (gameResponse.status != 200) {
+      this.setState({
+        error: true,
+        errorMessage: gameResult
+      });
+    }
 
     await this.populateData();
   }

@@ -9,10 +9,11 @@ export class BalanceAndOperations extends Component {
     this.state = {
       balance: {},
       operations: [],
-      withdraw: { amount: 0 },
-      deposit: { amount: 0 },
+      withdraw: { amount: 1 },
+      deposit: { amount: 1 },
       loading: true,
-      error: false
+      error: false,
+      errorMessage: {},
     };
     this.handleDepositAmountChange = this.handleDepositAmountChange.bind(this);
     this.handleWithdrawAmountChange =
@@ -85,6 +86,14 @@ export class BalanceAndOperations extends Component {
       ? "..."
       : this.state.balance.currentBalance;
 
+    let alert = this.state.error ? (
+      <div class="alert alert-danger" role="alert">
+        {this.state.errorMessage.message}
+      </div>
+    ) : (
+      ""
+    );
+
     return (
       <div>
         <h1 id="tableLabel">Balance and operations</h1>
@@ -94,6 +103,7 @@ export class BalanceAndOperations extends Component {
             type="number"
             class="form-control"
             id="depositInput"
+            min="1"
             value={this.state.deposit.amount}
             onChange={this.handleDepositAmountChange}
           />
@@ -108,6 +118,7 @@ export class BalanceAndOperations extends Component {
             type="number"
             class="form-control"
             id="withdrawInput"
+            min="1"
             value={this.state.withdraw.amount}
             onChange={this.handleWithdrawAmountChange}
           />
@@ -117,6 +128,7 @@ export class BalanceAndOperations extends Component {
             </button>
           </div>
         </form>
+        {alert}
         {contents}
       </div>
     );
@@ -140,7 +152,7 @@ export class BalanceAndOperations extends Component {
   }
 
   async withdraw() {
-    this.setState({ loading: true });
+    this.setState({ loading: true, error: false });
     const token = await authService.getAccessToken();
     const withdrawResponse = await fetch("api/balance/withdraw", {
       method: "POST",
@@ -154,11 +166,19 @@ export class BalanceAndOperations extends Component {
       body: JSON.stringify(this.state.withdraw),
     });
 
+    const result = await withdrawResponse.json();
+    if (withdrawResponse.status != 200) {
+      this.setState({
+        error: true,
+        errorMessage: result
+      });
+    }
+
     await this.populateData();
   }
 
   async deposit() {
-    this.setState({ loading: true });
+    this.setState({ loading: true, error: false });
     const token = await authService.getAccessToken();
     const depositResponse = await fetch("api/balance/deposit", {
       method: "POST",
@@ -172,9 +192,12 @@ export class BalanceAndOperations extends Component {
       body: JSON.stringify(this.state.deposit),
     });
 
-    if (depositResponse.status != 200)
-    {
-      
+    const result = await depositResponse.json();
+    if (depositResponse.status != 200) {
+      this.setState({
+        error: true,
+        errorMessage: result
+      });
     }
 
     await this.populateData();

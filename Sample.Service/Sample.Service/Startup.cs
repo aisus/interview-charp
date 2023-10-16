@@ -19,6 +19,7 @@ using System.Text.Json.Serialization;
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.CookiePolicy;
+using Sample.Service.Middleware;
 
 namespace Sample.Service
 {
@@ -45,7 +46,8 @@ namespace Sample.Service
             });
 
             services.AddDbContext<DbContext, SampleDbContext>(options =>
-                 options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
+                // options.UseInMemoryDatabase("inmemory"));
+                options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -67,7 +69,11 @@ namespace Sample.Service
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(option=>
+            {
+                option.Filters.Add(new ExceptionFilter());
+                option.Filters.Add(new ValidationFilter());
+            });
             services.AddRazorPages();
 
             services.ConfigureApplicationCookie(options =>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sample.Business.DTO;
 using Sample.Business.Services;
 using Sample.DAL.Models;
+using Sample.Extensions.Infrastrcture;
 using Sample.Extensions.Web;
 
 namespace Sample.Service.Controllers
@@ -35,7 +36,7 @@ namespace Sample.Service.Controllers
 
         [HttpPost("withdraw")]
         [ProducesResponseType(typeof(BalanceOutputDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(MessageResult), StatusCodes.Status400BadRequest)]
         public Task<IActionResult> Withdraw(BalanceInputDTO dto)
         {
             return ResultAsync<Balance, BalanceOutputDTO>(service.Withdraw(dto.Amount));

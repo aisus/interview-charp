@@ -12,7 +12,7 @@ namespace Sample.Business.Services.Game
     {
         public GameOutputDTO CalculateBet(GameInputDTO input)
         {
-            var randNumber = new Random().Next(10);
+            var randNumber = new Random().Next(1, 10);
             return new GameOutputDTO
             {
                 Stake = input.Stake,

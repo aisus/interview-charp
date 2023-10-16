@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sample.Business.DTO;
 using Sample.Business.Services;
 using Sample.DAL.Models;
+using Sample.Extensions.Infrastrcture;
 using Sample.Extensions.Web;
 
 namespace Sample.Service.Controllers
@@ -21,7 +22,7 @@ namespace Sample.Service.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(GameOutputDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(MessageResult), StatusCodes.Status400BadRequest)]
         public Task<IActionResult> Deposit(GameInputDTO dto)
         {
             return ResultAsync(service.Play(dto));

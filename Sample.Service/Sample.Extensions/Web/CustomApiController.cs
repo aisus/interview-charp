@@ -9,12 +9,12 @@ namespace Sample.Extensions.Web
     {
         protected IActionResult Result<T>(ApiResult<T> result) where T : class
         {
-            return result ? Ok(result.Entity) : StatusCode((int)result.ResultCode, result.Message);
+            return result ? Ok(result.Entity) : StatusCode((int)result.ResultCode, new MessageResult(){Message = result.Message});
         }
 
         protected IActionResult Result<T, TModel>(ApiResult<T> result) where T : class
         {
-            return result ? Ok(result.Entity.Adapt<TModel>()) : StatusCode((int)result.ResultCode, result.Message);
+            return result ? Ok(result.Entity.Adapt<TModel>()) : StatusCode((int)result.ResultCode, new MessageResult(){Message = result.Message});
         }
 
         protected IActionResult Success(bool success)
@@ -24,7 +24,7 @@ namespace Sample.Extensions.Web
 
         protected IActionResult BadRequest(string message)
         {
-            return StatusCode(400, message);
+            return StatusCode(400, new MessageResult(){Message = message});
         }
 
         protected async Task<IActionResult> ResultAsync<T>(Task<ApiResult<T>> task) where T : class
