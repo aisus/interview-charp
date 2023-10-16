@@ -20,7 +20,7 @@ namespace Sample.DAL
             .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<SampleDbContext>();
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("PostgreSQL"));
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 
             return new SampleDbContext(optionsBuilder.Options, new OperationalStoreOptionsMigrations());
         }

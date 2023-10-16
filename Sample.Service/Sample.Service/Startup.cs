@@ -45,10 +45,18 @@ namespace Sample.Service
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sample.Service", Version = "v1" });
             });
 
-            services.AddDbContext<DbContext, SampleDbContext>(options =>
-                // options.UseInMemoryDatabase("inmemory"));
-                options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
-
+            var connString = Configuration.GetConnectionString("DefaultConnection");
+            if (connString == "InMemory")
+            {
+                services.AddDbContext<DbContext, SampleDbContext>(options =>
+                    options.UseInMemoryDatabase("inmemory"));
+            }
+            else
+            {
+                services.AddDbContext<DbContext, SampleDbContext>(options =>
+                    options.UseNpgsql(connString));
+            }
+           
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -115,7 +123,11 @@ namespace Sample.Service
                 c.RoutePrefix = "swagger/ui";
             });
 
-            app.InitializeDatabase();
+            var connString = Configuration.GetConnectionString("DefaultConnection");
+            if (connString != "InMemory")
+            {
+                app.InitializeDatabase();
+            }
             app.UseHsts();
 
             app.UseHttpsRedirection();
