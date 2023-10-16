@@ -23,7 +23,7 @@ services:
         networks:
             - sampleservice_net    
         environment:
-            POSTGRES_DB: sampleservice
+            POSTGRES_DB: interview_rhenus
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
         ports:

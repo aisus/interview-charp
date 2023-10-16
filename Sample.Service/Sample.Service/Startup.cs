@@ -16,6 +16,8 @@ using Sample.Business.Services;
 using Sample.Business.Services.Game;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Duende.IdentityServer.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Sample.Service
 {
@@ -50,7 +52,22 @@ namespace Sample.Service
                 .AddEntityFrameworkStores<SampleDbContext>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, SampleDbContext>();
+                .AddApiAuthorization<ApplicationUser, SampleDbContext>(
+                // options => {
+                // options.Clients.AddIdentityServerSPA("src", builder =>
+                // {
+                //     builder.WithRedirectUri("https://localhost:44307/authentication/login-callback");
+                //     builder.WithLogoutRedirectUri("https://localhost:44307/authentication/logout-callback");
+                // });
+                // options.Clients.Add(new Client
+                // {
+                //     ClientId = "src",
+                //     AllowedGrantTypes = { GrantType.ResourceOwnerPassword },
+                //     ClientSecrets = { new Secret("secret".Sha256()) },
+                //     AllowedScopes = { "api", "openid", "profile" }
+                // });
+                // }
+                );
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
@@ -58,6 +75,10 @@ namespace Sample.Service
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.Unspecified;
+            });
 
             services.AddTransient(typeof(IAsyncCrudService<>), typeof(AsyncCrudService<>));
             services.AddTransient(typeof(IAsyncOrderedQueryService<>), typeof(AsyncOrderedQueryService<>));
@@ -75,6 +96,16 @@ namespace Sample.Service
                 app.UseDeveloperExceptionPage();
             }
 
+            var forwardedHeadersOptions = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                RequireHeaderSymmetry = false
+            };
+            forwardedHeadersOptions.KnownNetworks.Clear();
+            forwardedHeadersOptions.KnownProxies.Clear();
+
+            app.UseForwardedHeaders(forwardedHeadersOptions);
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -90,6 +121,7 @@ namespace Sample.Service
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
